@@ -27,3 +27,36 @@ The submission file in the correct format:
 
 - `id` - the id of the image
 - `is_iceberg` - your predicted probability that this image is iceberg.
+
+## Prerequisite
+
+Since the codes are written in Python 3, if you run the code on the campus servers, turn Python 3 module on by running:
+
+```
+module load python/3.6.0
+```
+
+## Preprocessing
+
+`data_cleaning.py`
+
+- Input file: train.json
+- Output file: data\_processed.csv
+
+Convert .json format to .csv format. Returns data frame with 1604 rows, 11253 columns. For each row, the order of the columns are: 'id', 'band\_1' * 5625, 'band\_2' * 5625, 'is\_iceberg'.
+
+Removed a feature `inc_angle` because there were 133 missing data out of 1604 entris. Other columns had no missing values.
+
+```
+python data_cleaning.py data/train.json
+```
+
+## Experiment 1 (Using Original Data)
+
+### Source Codes
+
+- main\_knn.py
+- main\_nn.py
+- main\_svm.py
+- main\_rf.py
+- classification\_algo.py
