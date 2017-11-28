@@ -60,3 +60,15 @@ python data_cleaning.py data/train.json
 - main\_svm.py
 - main\_rf.py
 - classification\_algo.py
+
+### Running the codes
+
+```
+python main_svm.py -i data/data_processed.csv -kfold 5 -kernel poly
+python main_svm.py -i data/data_processed.csv -kfold 5 -kernel linear
+python main_svm.py -i data/data_processed.csv -kfold 5 -kernel rbf
+python main_svm.py -i data/data_processed.csv -kfold 5 -kernel sigmoid
+python main_knn.py -i data/data_processed.csv -kfold 5
+python main_nn.py -i data/data_processed.csv -kfold 5 -activation identity -solver adam
+python main_nn.py -i data/data_processed.csv -kfold 5 -activation logistic -solver adam
+```
