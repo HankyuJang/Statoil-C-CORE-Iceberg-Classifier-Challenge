@@ -38,10 +38,11 @@ module load python/3.6.0
 
 ## Preprocessing
 
-`data_cleaning.py`
-
 - Input file: train.json
-- Output file: data\_processed.csv
+
+### Method 1: Remove column with `na`
+
+- Output file: data\_processed\_angle\_removed.csv
 
 Convert .json format to .csv format. Returns data frame with 1604 rows, 11253 columns. For each row, the order of the columns are: 'id', 'band\_1' * 5625, 'band\_2' * 5625, 'is\_iceberg'.
 
@@ -51,7 +52,23 @@ Removed a feature `inc_angle` because there were 133 missing data out of 1604 en
 python data_cleaning.py data/train.json
 ```
 
-## Experiment 1 (Using Original Data)
+### Method 2: Remove rows with `na` in the column `inc_angle`
+
+- Output file: data\_processed\_rows\_eliminated.csv
+
+```
+python data_cleaning2.py data/train.json
+```
+
+### Method 3: Add two bands together and Remove rows with `na` in the column `inc_angle`
+
+- Output file: data\_processed\_bands\_combined.csv
+
+```
+python data_cleaning3.py data/train.json
+```
+
+## Experiment 1 (Without angle column)
 
 ### Source Codes
 
@@ -64,11 +81,110 @@ python data_cleaning.py data/train.json
 ### Running the codes
 
 ```
-python main_svm.py -i data/data_processed.csv -kfold 5 -kernel poly
-python main_svm.py -i data/data_processed.csv -kfold 5 -kernel linear
-python main_svm.py -i data/data_processed.csv -kfold 5 -kernel rbf
-python main_svm.py -i data/data_processed.csv -kfold 5 -kernel sigmoid
-python main_knn.py -i data/data_processed.csv -kfold 5
-python main_nn.py -i data/data_processed.csv -kfold 5 -activation identity -solver adam
-python main_nn.py -i data/data_processed.csv -kfold 5 -activation logistic -solver adam
+python main_svm.py -i data/data_processed_angle_removed.csv -kfold 5 -kernel poly
+python main_svm.py -i data/data_processed_angle_removed.csv -kfold 5 -kernel linear
+python main_svm.py -i data/data_processed_angle_removed.csv -kfold 5 -kernel rbf
+python main_svm.py -i data/data_processed_angle_removed.csv -kfold 5 -kernel sigmoid
+python main_knn.py -i data/data_processed_angle_removed.csv -kfold 5
+python main_rf.py -i data/data_processed_angle_removed.csv -kfold 5
+python main_nn.py -i data/data_processed_angle_removed.csv -kfold 5 -activation identity -solver adam
+python main_nn.py -i data/data_processed_angle_removed.csv -kfold 5 -activation logistic -solver adam
 ```
+
+### Results
+```
+0.753,kernel=poly,C=0.125,gamma=0.0001220703125,degree=1,SVM
+0.721,kernel=linear,C=0.125,SVM
+0.724,kernel=rbf,C=32.0,gamma=3.0517578125e-05,SVM
+0.531,kernel=sigmoid,C=0.125,gamma=3.0517578125e-05,SVM
+0.751,n=5,weights=uniform,kNN
+0.767,criterion=entropy,n=1024,minss=2,RandomForest
+0.636,hls=(32, 64, 32),alpha=0.25,activation=identity,solver=adam,NeuralNetwork
+0.531,hls=(16, 16, 16),alpha=0.00390625,activation=logistic,solver=adam,NeuralNetwork
+```
+
+## Experiment 2 (Removed rows with 'na' in teh angle)
+
+### Running the codes
+
+```
+python main_svm.py -i data/data_processed_rows_eliminated.csv -kfold 5 -kernel poly
+python main_svm.py -i data/data_processed_rows_eliminated.csv -kfold 5 -kernel linear
+python main_svm.py -i data/data_processed_rows_eliminated.csv -kfold 5 -kernel rbf
+python main_svm.py -i data/data_processed_rows_eliminated.csv -kfold 5 -kernel sigmoid
+python main_knn.py -i data/data_processed_rows_eliminated.csv -kfold 5
+python main_rf.py -i data/data_processed_rows_eliminated.csv -kfold 5
+python main_nn.py -i data/data_processed_rows_eliminated.csv -kfold 5 -activation identity -solver adam
+```
+
+### Results
+```
+0.770,kernel=poly,C=0.5,gamma=3.0517578125e-05,degree=1,SVM
+0.740,kernel=linear,C=0.125,SVM
+0.728,kernel=rbf,C=2.0,gamma=3.0517578125e-05,SVM
+0.512,kernel=sigmoid,C=0.125,gamma=3.0517578125e-05,SVM
+0.761,n=3,weights=uniform,kNN
+0.767,criterion=gini,n=512,minss=4,RandomForest
+0.634,hls=(32, 64, 32),alpha=0.5,activation=identity,solver=adam,NeuralNetwork
+```
+
+## Experiment 3 (Combine bands together)
+
+### Running the codes
+
+```
+python main_svm.py -i data/data_processed_bands_combined.csv -kfold 5 -kernel poly
+python main_svm.py -i data/data_processed_bands_combined.csv -kfold 5 -kernel linear
+python main_svm.py -i data/data_processed_bands_combined.csv -kfold 5 -kernel rbf
+python main_svm.py -i data/data_processed_bands_combined.csv -kfold 5 -kernel sigmoid
+python main_knn.py -i data/data_processed_bands_combined.csv -kfold 5
+python main_rf.py -i data/data_processed_bands_combined.csv -kfold 5
+python main_nn.py -i data/data_processed_bands_combined.csv -kfold 5 -activation identity -solver adam
+```
+
+### Results
+```
+0.724,kernel=poly,C=0.125,gamma=0.0001220703125,degree=1,SVM
+0.673,kernel=linear,C=0.125,SVM
+0.815,kernel=rbf,C=2.0,gamma=3.0517578125e-05,SVM
+0.708,n=3,weights=uniform,kNN
+0.753,criterion=gini,n=512,minss=8,RandomForest
+0.633,hls=(64, 32, 64),alpha=1.0,activation=identity,solver=adam,NeuralNetwork
+```
+
+rbf: experiment with smaller alpha
+
+## Dimensionality Reduction
+
+Reduce dimension of the dataset
+
+### PCA
+
+Reduce the dimension of the bands using PCA.
+
+#### number of dimensions: 100
+
+### Results
+```
+0.835,kernel=poly,C=0.125,gamma=0.0001220703125,degree=2,SVM
+0.862,kernel=rbf,C=8.0,gamma=7.62939453125e-06,SVM
+0.773,n=3,weights=uniform,kNN
+0.833,criterion=entropy,n=256,minss=8,RandomForest
+0.762,hls=(32, 32, 32),alpha=0.0625,activation=identity,solver=adam,NeuralNetwork
+```
+
+#### number of dimensions: 50
+
+### Results
+```
+0.852,kernel=poly,C=0.125,gamma=0.0001220703125,degree=2,SVM
+0.861,kernel=rbf,C=512.0,gamma=1.9073486328125e-06,SVM
+0.850,criterion=gini,n=1024,minss=2,RandomForest
+0.804,n=3,weights=uniform,kNN
+0.770,hls=(64, 16, 64),alpha=0.015625,activation=identity,solver=adam,NeuralNetwork
+0.763,hls=(16, 16, 16),alpha=0.0078125,activation=tanh,solver=adam,NeuralNetwork
+```
+
+## Testing the model on the test dataset
+
+Dataset is too big...

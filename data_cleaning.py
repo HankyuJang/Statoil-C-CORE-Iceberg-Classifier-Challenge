@@ -15,10 +15,14 @@ from pandas import DataFrame
 def create_X_y(data):
     X = []
     for line in data:
-        sub_list = [line['inc_angle']]
+        sub_list = [line['id']]
+        sub_list.append(line['inc_angle'])
         sub_list.extend(line['band_1'])
         sub_list.extend(line['band_2'])
         sub_list.append(line['is_iceberg'])
+        # sub_list.extend([float(x) for x in line['band_1']])
+        # sub_list.extend([float(x) for x in line['band_2']])
+        # sub_list.append(bool(line['is_iceberg']))
         X.append(sub_list)
     return np.array(X)
 
@@ -32,7 +36,7 @@ X = create_X_y(data)
 print("Convert to Pandas DataFrame")
 band_1 = ['b1_' + str(x) for x in range(len(data[0]['band_1']))]
 band_2 = ['b2_' + str(x) for x in range(len(data[0]['band_2']))]
-column_names = ['inc_angle'] + band_1 + band_2 + ['is_iceberg']
+column_names = ['id'] + ['inc_angle'] + band_1 + band_2 + ['is_iceberg']
 df = DataFrame(data=X, columns=column_names)
 # >>> df.shape
 # (1604, 11252)
@@ -44,6 +48,6 @@ print("Handling missing data...")
 # 133
 
 del df['inc_angle']
-df = df.astype(float)
+# df = df.astype(float)
 
-df.to_csv("data/data_processed.csv")
+df.to_csv("data/data_processed_angle_removed.csv", index=False)
