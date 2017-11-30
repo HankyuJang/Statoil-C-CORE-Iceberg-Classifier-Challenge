@@ -19,9 +19,8 @@ def read_csv(infile):
         # Skip the ID
         x_id.append(line[0])
         x_angle.append(float(line[1]))
-        X.append([float(x) for x in line[2:-1]])
-        y.append(int(line[-1]))
-    return np.array(x_id), np.array(x_angle), np.array(X), np.array(y)
+        X.append([float(x) for x in line[2:]])
+    return np.array(x_id), np.array(x_angle), np.array(X)
 
 if __name__ == '__main__':
     parser = ArgumentParser(description="PCA dimension reduction")
@@ -34,11 +33,10 @@ if __name__ == '__main__':
     n = args.num_basis
     #####################################################################
     # Prepare X and y from the input txt file
-    print("Preparing X and y from the input txt file...")
-    x_id, x_angle, X, y = read_csv(args.infile)
+    print("Preparing X from the input txt file...")
+    x_id, x_angle, X = read_csv(args.infile)
     x_id = x_id.reshape((x_id.shape[0],1))
     x_angle = x_angle.reshape((x_angle.shape[0],1))
-    y = y.reshape((y.shape[0],1))
 
     print("PCA Dimension Reduction")
     # project the feature space up n dimensions
@@ -56,8 +54,8 @@ if __name__ == '__main__':
     # df_wo.to_csv(filename, index=False)
 
     # Dataset with angle (angle + PCA eigenvectors)
-    data_w_angle = np.hstack((x_id, x_angle, X, y))
-    column_names = ['id'] + ['inc_angle'] + band + ['is_iceberg']
+    data_w_angle = np.hstack((x_id, x_angle, X))
+    column_names = ['id'] + ['inc_angle'] + band 
     df_w = pd.DataFrame(data_w_angle, columns=column_names)
     filename = "data/" + args.outfile + str(n) + ".csv"
     df_w.to_csv(filename, index=False)
