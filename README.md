@@ -187,4 +187,15 @@ Reduce the dimension of the bands using PCA.
 
 ## Testing the model on the test dataset
 
-Dataset is too big...
+I created the .csv file in the Karst server due to the scale of the dataset.
+
+### Reduce dimension of the test data
+```
+python pca.py -i data/testdata.csv -o testdata_pca -n 100
+```
+
+Training the model using the train set and test them, outputs a `output.csv` with two columns: (id, probability of iceberg)
+```
+python svm_test.py -i data/data_processed_rows_eliminated.csv -t data/testdata.csv -C 512 -gamma 0.0000019073486328125 -kernel rbf
+```
+
