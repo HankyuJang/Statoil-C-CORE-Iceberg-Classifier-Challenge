@@ -187,15 +187,25 @@ Reduce the dimension of the bands using PCA.
 
 ## Testing the model on the test dataset
 
-I created the .csv file in the Karst server due to the scale of the dataset.
+I created the `testdata.csv` file in the Karst server due to the scale of the dataset.
 
 ### Reduce dimension of the test data
+
+1. Fit pca on the training set
+2. Transform the training set
+3. Transform the test set using above fitted(?) pca model
+
 ```
-python pca.py -i data/testdata.csv -o testdata_pca -n 100
+python pca.py -i data/data_processed_rows_eliminated.csv -t data/testdata.csv -o data_processed_pca -n 100
 ```
 
 Training the model using the train set and test them, outputs a `output.csv` with two columns: (id, probability of iceberg)
 ```
-python svm_test.py -i data/data_processed_rows_eliminated.csv -t data/testdata.csv -C 512 -gamma 0.0000019073486328125 -kernel rbf
+python svm_test.py -i data/data_processed_pca100.csv -t data/test_data_processed_pca100.csv -C 8 -gamma 0.00000762939453125 -kernel rbf
 ```
+
+- Current ranking: 1270th 
+- Log loss: 0.3147
+
+
 
