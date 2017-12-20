@@ -1,4 +1,4 @@
-# Statoil/C-CORE Iceberg Classifier Challenge - Ship or Iceberg?
+# Kaggle Competition: Statoil/C-CORE Iceberg Classifier Challenge - Ship or Iceberg?
 
 ## Team members
 
